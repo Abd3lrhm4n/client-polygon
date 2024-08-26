@@ -5,6 +5,7 @@ using Infrastructure.Repositories.Common;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Application.Services.Client;
+using Infrastructure.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddLogging(builder => builder.AddConsole());
+builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
 
 
 //builder.Services.AddScoped()
@@ -36,6 +39,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.MapControllers();
 

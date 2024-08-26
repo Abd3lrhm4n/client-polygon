@@ -1,9 +1,19 @@
+using Application.Services.Client;
+using Application.Services.EmailQueue;
+using Application.Services.Polygon;
 using Background;
 using Background.Services;
+using Domain.IRepositories;
+using Domain.IRepositories.Common;
 using Hangfire;
 using Hangfire.SqlServer;
+using Infrastructure.Context;
+using Infrastructure.Helpers;
+using Infrastructure.Repositories;
+using Infrastructure.Repositories.Common;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingContext, config) =>
@@ -39,8 +49,22 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddHangfireServer();
 
         // Register background jobs or services
+
+        services.AddHttpClient<IPolygonJobService, PolygonJobService>();
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
         services.AddScoped<PolygonJob>();
-        services.AddHttpClient<IPolygonService, PolygonService>();
+        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+        services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
+        services.AddScoped<IClientService, ClientService>();
+        services.AddTransient<GlobalExceptionHandlerMiddleware>();
+        services.AddLogging(builder => builder.AddConsole());
+        services.AddScoped<IEmailQueueService, EmailQueueService>();
+        services.AddScoped<IEmailQueueRepository, EmailQueueRepository>();
+        services.AddScoped<IPolygonService, PolygonService>();
+        services.AddScoped<IPolygonRepository, PolygonRepository>();
 
         //services.AddHostedService<Worker>();
     })
@@ -49,11 +73,30 @@ var builder = Host.CreateDefaultBuilder(args)
         // Configure Kestrel and Hangfire Dashboard
         webBuilder.UseKestrel(options =>
         {
-            options.ListenAnyIP(5000);
+            options.ListenAnyIP(5000); // HTTP port
+            options.ListenAnyIP(5001, listenOptions =>
+            {
+                listenOptions.UseHttps(); // HTTPS port
+            });
         })
         .Configure(app =>
         {
             app.UseHangfireDashboard("/hangfire");
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+            // Schedule the recurring job
+            //RecurringJob.AddOrUpdate<PolygonJob>(job => job.FetchStockDataAsync("AAPL"), Cron.Hourly(6));
+            // Define the recurring job options if needed
+            var serviceProvider = app.ApplicationServices;
+            // Schedule the recurring job
+
+            RecurringJob.AddOrUpdate<PolygonJob>(
+                "polygon-job",
+                (e) => e.FetchStockDataAsync("AAPL"),
+                Cron.Minutely()
+            );
+            
+            // Optionally, run the job immediately on startup
+            BackgroundJob.Enqueue<PolygonJob>(job => job.FetchStockDataAsync("AAPL"));
         });
     });
 
