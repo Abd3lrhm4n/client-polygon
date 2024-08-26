@@ -16,7 +16,7 @@ namespace Application.Dtos
         l => low
         v => volume
     */
-    public record StockAggregate(double t, decimal o, decimal c, decimal h, decimal l, double v);
+    public record StockAggregate(long t, decimal o, decimal c, decimal h, decimal l, double v);
 
     public record CreatePolygonDto(string request_id, string results);
     public record GetPolygonApiDataDto(string request_id, string[] results);

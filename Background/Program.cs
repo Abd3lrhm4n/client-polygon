@@ -65,6 +65,7 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddScoped<IEmailQueueRepository, EmailQueueRepository>();
         services.AddScoped<IPolygonService, PolygonService>();
         services.AddScoped<IPolygonRepository, PolygonRepository>();
+        services.AddScoped<SendEmailService>();
 
         //services.AddHostedService<Worker>();
     })
@@ -83,19 +84,15 @@ var builder = Host.CreateDefaultBuilder(args)
         {
             app.UseHangfireDashboard("/hangfire");
             app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
-            // Schedule the recurring job
-            //RecurringJob.AddOrUpdate<PolygonJob>(job => job.FetchStockDataAsync("AAPL"), Cron.Hourly(6));
-            // Define the recurring job options if needed
             var serviceProvider = app.ApplicationServices;
-            // Schedule the recurring job
 
-            RecurringJob.AddOrUpdate<PolygonJob>(
-                "polygon-job",
-                (e) => e.FetchStockDataAsync("AAPL"),
-                Cron.Minutely()
-            );
+            //RecurringJob.AddOrUpdate<PolygonJob>(
+            //    "polygon-job",
+            //    (e) => e.FetchStockDataAsync("AAPL"),
+            //    Cron.ho()
+            //);
             
-            // Optionally, run the job immediately on startup
+            // run the job immediately on startup
             BackgroundJob.Enqueue<PolygonJob>(job => job.FetchStockDataAsync("AAPL"));
         });
     });

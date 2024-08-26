@@ -9,6 +9,6 @@ namespace Background.Services
 {
     public interface IPolygonJobService
     {
-        Task<CreatePolygonDto?> GetStockDataAsync(string ticker);
+        Task<StockDataDto?> GetStockDataAsync(string ticker);
     }
 }
