@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="header">
+    <h1>Client Management</h1>
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Search clients..."
+      />
+      <button (click)="search()">Search</button>
+    </div>
+    <div class="filter-options">
+      <label for="filter">Filter by:</label>
+      <select id="filter" [(ngModel)]="selectedFilter" (change)="applyFilter()">
+        <option value="">All</option>
+        <option value="firstName">First Name</option>
+        <option value="lastName">Last Name</option>
+        <option value="email">Email</option>
+        <option value="phone">Phone</option>
+      </select>
+    </div>
+  </div>
+  <kendo-grid
+    [data]="clients"
+    [pageSize]="pageSize"
+    [skip]="skip"
+    (pageChange)="pageChange($event)"
+  >
+    <kendo-grid-column field="firstName" title="First Name"></kendo-grid-column>
+    <kendo-grid-column field="lastName" title="Last Name"></kendo-grid-column>
+    <kendo-grid-column field="email" title="Email"></kendo-grid-column>
+    <kendo-grid-column
+      field="phoneNumber"
+      title="Phone Number"
+    ></kendo-grid-column>
+    <kendo-grid-command-column title="Commands">
+      <ng-template kendoGridEditTemplate let-dataItem>
+        <button kendoGridEditCommand class="k-button k-primary">Edit</button>
+        <button kendoGridRemoveCommand class="k-button k-primary">
+          Delete
+        </button>
+      </ng-template>
+    </kendo-grid-command-column>
+  </kendo-grid>
+</div>
+<router-outlet></router-outlet>
