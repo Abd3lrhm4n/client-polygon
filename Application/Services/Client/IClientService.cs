@@ -14,5 +14,6 @@ namespace Application.Services.Client
         Task<ClientDto?> GetClientByIdAsync(long id);
         Task UpdateClientAsync(long id, UpdateClientDto dto);
         Task DeleteClientAsync(long id);
+        Task<GridClient> GetClientsPaginAsync(GridStateDto gridState);
     }
 }

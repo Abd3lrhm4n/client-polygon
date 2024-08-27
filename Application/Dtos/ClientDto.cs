@@ -9,5 +9,6 @@ namespace Application.Dtos
     public record CreateClientDto(string FirstName, string LastName, string Email, string PhoneNumber);
     public record UpdateClientDto(string FirstName, string LastName, string Email, string PhoneNumber);
     public record ClientDto(long Id, string FirstName, string LastName, string Email, string PhoneNumber);
+    public record GridClient(List<ClientDto> Clients, long Total);
 
 }

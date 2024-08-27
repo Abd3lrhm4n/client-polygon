@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ClientService } from '../services/client.service';
 import { Client } from '../models/client.model';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { DataStateChangeEvent, GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { State } from "@progress/kendo-data-query";
+import { Observable, take } from 'rxjs';
 
 @Component({
   selector: 'app-client',
@@ -17,38 +19,33 @@ export class ClientComponent implements OnInit {
   public data: any[] = [];
   public selectedFilter: string = '';
 
-  constructor(private clientService: ClientService) {}
+  public state: State = {
+    skip: 0,
+    take: 10,
+    filter: {
+      logic: 'and',
+      filters: []
+    }
+  };
+
+  constructor(private clientService: ClientService) {  }
 
   ngOnInit(): void {
     this.loadClients();
   }
 
   loadClients(): void {
-    this.clientService.getClients().subscribe(data => {
+    this.clientService.GetClientsPaginAsync(this.state).subscribe(data => {
       this.clients = {
-        data: data.slice(this.skip, this.skip + this.pageSize),
-        total: data.length
+        data: data.clients,
+        total: data.total
       };
+      console.log(this.clients)
     });
   }
 
-    search() {
-    this.applyFilter();
-  }
-
-  applyFilter() {
-    if (!this.searchTerm) {
-      this.filteredData = this.data;
-    } else {
-      this.filteredData = this.data.filter(client => {
-        const value = client[this.selectedFilter]?.toLowerCase() || '';
-        return value.includes(this.searchTerm.toLowerCase());
-      });
-    }
-  }
-
-  pageChange(event: PageChangeEvent): void {
-    this.skip = event.skip;
+  dataStateChange(event: DataStateChangeEvent): void {
+    this.state = event;
     this.loadClients();
   }
 

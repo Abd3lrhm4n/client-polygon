@@ -1,5 +1,6 @@
 ﻿using Application.Dtos;
 using Application.Services.Client;
+using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientsCRUD.Controllers
@@ -71,6 +72,12 @@ namespace ClientsCRUD.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("GetClientsPaginAsync")]
+        public async Task<IActionResult> GetClientsPaginAsync(GridStateDto gridState)
+        {
+            return Ok(await _clientService.GetClientsPaginAsync(gridState));
         }
     }
 }

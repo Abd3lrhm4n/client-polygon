@@ -9,6 +9,7 @@ using Application.Dtos;
 using System.ComponentModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Application.Helpers;
 
 namespace Application.Services.Client
 {
@@ -97,6 +98,18 @@ namespace Application.Services.Client
         public async Task DeleteClientAsync(long id)
         {
             await _clientRepository.DeleteAsync(id);
+        }
+
+        public async Task<GridClient> GetClientsPaginAsync(GridStateDto gridState)
+        {
+            var domainGridStateDto = gridState.ToDomain();
+
+            var clients = (await _clientRepository.GetClientsPaginAsync(domainGridStateDto))?
+                    .Select(x => new ClientDto(x.Id, x.FirstName, x.LastName, x.Email, x.PhoneNumber)).ToList() ?? new List<ClientDto>();
+
+            var totalCount = await _clientRepository.GetClientsCountAsync();
+
+            return new GridClient(clients, totalCount);
         }
     }
 }
