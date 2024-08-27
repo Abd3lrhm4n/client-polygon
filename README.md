@@ -26,7 +26,7 @@ This solution is composed of multiple projects using a clean architecture design
 
 - ```bash
   git clone <repository-url>
-  cd TechForceInterviewSolution
+  cd client-polygon
   ```
 
 ### Step 2: Configure the Database
@@ -40,15 +40,28 @@ This solution is composed of multiple projects using a clean architecture design
 
 ### Step 3: Run the Backend Projects
 
-1. Navigate to the solution root.
-2. Open a terminal and run the Web API project:
+1. Update `appsettings.json` email SMTP settings & poylgon api key.
+   ```json
+   "Polygon": {
+   "ApiKey": "your-api-key"
+   },
+   "EmailSettings": {
+   "SmtpServer": "smtp.gmail.com",
+   "Port": 587,
+   "SenderEmail": "your-email@gmail.com",
+   "SenderPassword": "password"
+   },
+   ```
+2. Copy `assests\EmailTemplate.html` to `bin\Debug\net8.0`
+3. Navigate to the solution root.
+4. Open a terminal and run the Web API project:
 
    ```bash
    cd ClientCRUD
    dotnet run
    ```
 
-3. In another terminal, run the Background worker project:
+5. In another terminal, run the Background worker project:
    ```bash
    cd Background
    dotnet run
@@ -96,21 +109,40 @@ This solution is composed of multiple projects using a clean architecture design
 2. **Create a New Site:**
 
    - Right-click on the "Sites" node and select "Add Website..."
-   - Set the "Site name" (e.g., TechForceClientCRUD).
+   - Set the "Site name" (e.g., ClientCRUD).
    - Set the "Physical path" to the directory where you copied the published files.
    - Configure the "Binding" settings (e.g., port 80 for HTTP or port 443 for HTTPS).
 
-3. **Configure Application Pool:**
+3. **Create a New Site for the Background project:**
+
+   - Repeat the same steps to create a new site for the Background project (e.g., Background).
+   - Update `appsettings.json` email SMTP settings & poylgon api key.
+     ```json
+     "Polygon": {
+     "ApiKey": "your-api-key"
+     },
+     "EmailSettings": {
+     "SmtpServer": "smtp.gmail.com",
+     "Port": 587,
+     "SenderEmail": "your-email@gmail.com",
+     "SenderPassword": "password"
+     },
+     ```
+   - Copy `assests\EmailTemplate.html` to `bin\Debug\net8.0`
+   - Set the "Physical path" to the directory where you copied the published files for the Background project.
+   - Configure the binding settings if needed (though Background services often don't require public HTTP bindings).
+
+4. **Configure Application Pool:**
 
    - Go to "Application Pools" in IIS Manager.
    - Ensure that the application pool for your site is running under the "No Managed Code" - - pipeline mode (since ASP.NET Core runs in its own process).
 
-4. **Set Up Permissions:**
+5. **Set Up Permissions:**
 
    - Ensure that the application pool identity has read and write permissions to the folder where - the application is published.
    - Adjust folder permissions if necessary.
 
-5. **Restart IIS:**
+6. **Restart IIS:**
 
 - To apply the changes, restart IIS or the specific site by right-clicking on it and selecting "Restart".
 
