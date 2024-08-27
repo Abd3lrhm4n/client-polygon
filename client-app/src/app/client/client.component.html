@@ -3,6 +3,7 @@
     <h1>Client Management</h1>
   </div>
   <kendo-grid
+    [kendoGridReactiveEditing]="createFormGroup"
     [data]="clients"
     [pageSize]="state.take"
     [skip]="state.skip"
@@ -12,7 +13,14 @@
     [pageable]="true"
     [filterable]="true"
     (dataStateChange)="dataStateChange($event)"
+    (save)="saveHandler($event)"
+    (remove)="removeHandler($event)"
   >
+    <ng-template kendoGridToolbarTemplate>
+      <button kendoGridAddCommand>Add new</button>
+      <button kendoButton (click)="saveHandler($event)">Save Changes</button>
+      <button kendoButton>Cancel Changes</button>
+    </ng-template>
     <kendo-grid-column field="firstName" title="First Name"></kendo-grid-column>
     <kendo-grid-column field="lastName" title="Last Name"></kendo-grid-column>
     <kendo-grid-column field="email" title="Email"></kendo-grid-column>
@@ -20,11 +28,15 @@
       field="phoneNumber"
       title="Phone Number"
     ></kendo-grid-column>
-    <kendo-grid-command-column title="Commands">
-      <ng-template kendoGridEditTemplate let-dataItem>
-        <button kendoGridEditCommand class="k-button k-primary">Edit</button>
-        <button kendoGridRemoveCommand class="k-button k-primary">
-          Delete
+    <kendo-grid-command-column title="command" [width]="220">
+      <ng-template kendoGridCellTemplate let-isNew="isNew">
+        <button kendoGridEditCommand [primary]="true">Edit</button>
+        <button kendoGridRemoveCommand>Remove</button>
+        <button kendoGridSaveCommand [disabled]="formGroup.invalid">
+          {{ isNew ? "Add" : "Update" }}
+        </button>
+        <button kendoGridCancelCommand>
+          {{ isNew ? "Discard changes" : "Cancel" }}
         </button>
       </ng-template>
     </kendo-grid-command-column>

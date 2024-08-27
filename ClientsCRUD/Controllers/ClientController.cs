@@ -52,7 +52,7 @@ namespace ClientsCRUD.Controllers
             try
             {
                 await _clientService.UpdateClientAsync(id, dto);
-                return Ok("Client updated successfully");
+                return Ok(new {message = "Client updated successfully", success = true });
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace ClientsCRUD.Controllers
             try
             {
                 await _clientService.DeleteClientAsync(id);
-                return Ok("Client deleted successfully");
+                return Ok(new { message = "Client deleted successfully", success = true });
             }
             catch (Exception ex)
             {

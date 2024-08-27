@@ -14,6 +14,8 @@ import {
 import { InputsModule } from "@progress/kendo-angular-inputs";
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ButtonsModule } from '@progress/kendo-angular-buttons';
+import { ReactiveFormsModule } from "@angular/forms";
 
 const routes: Routes = [
   { path: '', component: ClientComponent },
@@ -34,7 +36,9 @@ const routes: Routes = [
     PDFModule,
     ExcelModule,
     RouterModule.forRoot(routes),
-    FormsModule
+    FormsModule,
+    ButtonsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

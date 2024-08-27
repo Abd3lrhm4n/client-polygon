@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 kendo-grid {
   height: 400px;
+  width: 100%;
 }
 .container {
   padding: 20px;
@@ -56,6 +57,6 @@ kendo-grid {
   border-radius: 4px;
 }
 
-kendo-grid {
-  width: 100%;
+.k-button {
+  display: inline-block;
 }
