@@ -10,9 +10,5 @@ namespace Application.Services.Polygon
     public interface IPolygonService
     {
         Task AddAsync(CreatePolygonDto entity);
-        //IQueryable<Polygon> GetQueryable();
-        //Task<IEnumerable<Polygon>> GetAllAsync();
-        //Task<Polygon?> GetByIdAsync(string id);
-        //Task AddAsync(Polygon entity);
     }
 }

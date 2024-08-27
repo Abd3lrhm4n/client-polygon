@@ -67,7 +67,6 @@ var builder = Host.CreateDefaultBuilder(args)
         services.AddScoped<IPolygonRepository, PolygonRepository>();
         services.AddScoped<SendEmailService>();
 
-        //services.AddHostedService<Worker>();
     })
     .ConfigureWebHostDefaults(webBuilder =>
     {
@@ -86,12 +85,12 @@ var builder = Host.CreateDefaultBuilder(args)
             app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
             var serviceProvider = app.ApplicationServices;
 
-            //RecurringJob.AddOrUpdate<PolygonJob>(
-            //    "polygon-job",
-            //    (e) => e.FetchStockDataAsync("AAPL"),
-            //    Cron.ho()
-            //);
-            
+            RecurringJob.AddOrUpdate<PolygonJob>(
+                "polygon-job",
+                (e) => e.FetchStockDataAsync("AAPL"),
+                Cron.Hourly(6)
+            );
+
             // run the job immediately on startup
             BackgroundJob.Enqueue<PolygonJob>(job => job.FetchStockDataAsync("AAPL"));
         });
