@@ -79,7 +79,7 @@ namespace Application.Services.Client
                 throw new Exception("Client not found.");
             }
 
-            var existingClient = _clientRepository.GetQueryable()
+            var existingClient = await _clientRepository.GetQueryable()
                 .Where(x => x.Email == dto.Email && x.Id != id).FirstOrDefaultAsync();
 
             if (existingClient != null)
